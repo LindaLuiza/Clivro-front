@@ -3,6 +3,7 @@ import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {styles} from './styles';
 import {requestResponse} from "@/utils";
+import {API_URL} from '../../utils/config';
 
 export default function Signup() {
     const router = useRouter();
@@ -22,7 +23,7 @@ export default function Signup() {
                 "username": username,
                 "password": password
             }
-            await requestResponse("http://177.143.186.29:9999/users/signup", "POST", body)
+            await requestResponse(`${API_URL}/users/signup`, "POST", body)
             router.push('/login');
         }
     };
@@ -33,18 +34,21 @@ export default function Signup() {
 
             <TextInput
                 style={styles.input}
+                placeholderTextColor="#555"
                 placeholder="Name"
                 value={name}
                 onChangeText={setName}
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor="#555"
                 placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
             />
             <TextInput
                 style={styles.input}
+                placeholderTextColor="#555"
                 placeholder="Email"
                 keyboardType="email-address"
                 value={email}
@@ -53,6 +57,7 @@ export default function Signup() {
             <View style={styles.passwordContainer}>
                 <TextInput
                     style={styles.input}
+                    placeholderTextColor="#555"
                     placeholder="Password"
                     secureTextEntry={!showPassword}
                     value={password}

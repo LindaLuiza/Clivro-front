@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useAuth} from '@/context/AuthContext';
 import {useRouter} from 'expo-router';
 import {styles} from './styles';
+import {API_URL} from '../../utils/config';
 
 export default function Login() {
     const [identifier, setIdentifier] = useState('');
@@ -22,7 +23,7 @@ export default function Login() {
             formBody.append('username', identifier);
             formBody.append('password', password);
 
-            const response = await fetch('http://177.143.186.29:9999/token', {
+            const response = await fetch(`${API_URL}/users/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -39,15 +40,16 @@ export default function Login() {
 
             await AsyncStorage.setItem('access_token', token);
 
-            const userResponse = await fetch('http://177.143.186.29:9999/me', {
+            const userResponse = await fetch(`${API_URL}/users/me`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            const user = await userResponse.json();
+            await userResponse.json();
             Alert.alert('Login OK');
-            router.push('/');
+            await login(identifier, password);
+            router.push('/home');
         } catch (error) {
             console.error(error);
             Alert.alert('Login Error', 'Check your credentials');
@@ -60,6 +62,7 @@ export default function Login() {
 
             <TextInput
                 placeholder="Email or Username"
+                placeholderTextColor="#555"
                 onChangeText={setIdentifier}
                 value={identifier}
                 style={styles.input}
@@ -68,6 +71,7 @@ export default function Login() {
 
             <TextInput
                 placeholder="Password"
+                placeholderTextColor="#555"
                 onChangeText={setPassword}
                 value={password}
                 secureTextEntry

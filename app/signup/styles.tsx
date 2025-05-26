@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input: {
+        color: "#555",
         width: '100%',
         padding: 10,
         marginBottom: 15,

@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
         color: '#333',
     },
     input: {
+        color: "#555",
         borderWidth: 1,
         borderColor: '#ccc',
         paddingVertical: 10,

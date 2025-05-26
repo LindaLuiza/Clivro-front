@@ -1,8 +1,9 @@
-export async function requestResponse(url: string, method: string, body?: object) {
+export async function requestResponse(url: string, method: string, body?: object, token ?: string) {
     const options: RequestInit = {
         method,
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
         },
     };
     if (body) {
@@ -13,7 +14,7 @@ export async function requestResponse(url: string, method: string, body?: object
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return await response.json();
+        return response;
     } catch (error) {
         console.error('Error:', error);
         throw error;

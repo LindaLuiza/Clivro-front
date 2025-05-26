@@ -16,6 +16,9 @@ export default function InitialPage() {
             <TouchableOpacity style={styles.button} onPress={() => router.push('/signup')}>
                 <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('/clubs')}>
+                <Text style={styles.buttonText}>Feed</Text>
+            </TouchableOpacity>
         </View>
     );
 }
