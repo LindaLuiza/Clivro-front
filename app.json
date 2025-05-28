@@ -40,7 +40,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "API_URL": "http://177.143.186.29:9001",
+      "API_URL": "http://arthurtv.duckdns.org:9001",
       "router": {},
       "eas": {
         "projectId": "4d51092e-5309-4049-8912-442a8fce53df"
