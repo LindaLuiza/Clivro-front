@@ -27,7 +27,7 @@ export const NavBar = () => {
             <NavButton label="Feed" route="/home"/>
             <NavButton label="Clubs" route="/clubs"/>
             <NavButton label="New" route="/new-post"/>
-            <NavButton label="Search" route="/search"/>
+            <NavButton label="MyClubs" route="/my-clubs"/>
             <NavButton label="Profile" route="/profile"/>
         </View>
     );

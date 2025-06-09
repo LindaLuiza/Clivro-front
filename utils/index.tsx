@@ -6,7 +6,7 @@ export async function requestResponse(url: string, method: string, body?: object
             'Authorization': 'Bearer ' + token,
         },
     };
-    if (body) {
+    if (method !== "GET" && body) {
         options.body = JSON.stringify(body);
     }
     try {

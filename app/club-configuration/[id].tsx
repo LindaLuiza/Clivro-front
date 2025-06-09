@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Alert, Button, ScrollView, Text, TextInput, View,} from "react-native";
+import React, {useEffect, useMemo, useState} from "react";
+import {Alert, Button, Pressable, ScrollView, Text, TextInput, View,} from "react-native";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {requestResponse} from "@/utils";
 import {API_URL} from "@/utils/config";
@@ -23,6 +23,14 @@ type User = {
     created_at: string;
     updated_at: string;
 }
+type Member = {
+    id: string;
+    club_id: string;
+    user_id: string;
+    registered_at: string;
+    clubs: Club | null;
+    users: User | null;
+}
 
 export default function ClubDetailsScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -31,7 +39,8 @@ export default function ClubDetailsScreen() {
     const tokenAuth = token ?? "";
 
     const [club, setClub] = useState<Club | null>(null);
-    const [owner, setOwner] = useState<User | null>(null)
+    const [owner, setOwner] = useState<User | null>(null);
+    const [members, setMembers] = useState<Member[]>([]);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Partial<Club>>({});
 
@@ -57,6 +66,22 @@ export default function ClubDetailsScreen() {
         }
 
         if (id) fetchClub();
+
+        function handleMembers() {
+            requestResponse(
+                `${API_URL}/clubs/${encodeURIComponent(id)}/members`,
+                "GET",
+            )
+                .then(async (response) => await response.json()).then((members) => {
+                setMembers(members)
+            })
+                .catch(() => {
+                    Alert.alert("Error", "Couldn't update club");
+                });
+        }
+
+        handleMembers()
+        sortMembers()
     }, [id]);
 
     function handleSave() {
@@ -112,6 +137,26 @@ export default function ClubDetailsScreen() {
         ]);
     }
 
+    function sortMembers() {
+        return setMembers((prevMembers) => prevMembers.sort(function (a, b) {
+            if(a.users == null || b.users == null) return 1;
+            const x = a.users?.name;
+            const y = b.users?.name;
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        }));
+    }
+
+    function handleAddMember() {
+        requestResponse(
+            `${API_URL}/clubs/${encodeURIComponent(id)}/members`,
+            "POST",
+            {},
+            tokenAuth
+        ).then(async (response) => await response.json()).then((member: Member) => {
+            setMembers((prevState) => [...prevState, member]);
+        })
+    }
+
     if (!club) {
         return (
             <View style={styles.container}>
@@ -143,6 +188,7 @@ export default function ClubDetailsScreen() {
                         }
                     }}
                 />
+                <Button title="Participate" color="grey" onPress={handleAddMember}/>
                 <Button title="Delete" color="red" onPress={handleDelete}/>
             </View>
 
@@ -175,7 +221,7 @@ export default function ClubDetailsScreen() {
                         <Text style={styles.bold}>Description</Text> {club.description}
                     </Text>
                     <Text>
-                        <Text style={styles.bold}>Owner_id</Text> {ownerName}
+                        <Text style={styles.bold}>Owner</Text> {ownerName}
                     </Text>
                     <Text>
                         <Text style={styles.bold}>Created at</Text> {formatDate(club.created_at)}
@@ -184,6 +230,22 @@ export default function ClubDetailsScreen() {
                         <Text style={styles.bold}>Updated at</Text> {formatDate(club.updated_at)}
                     </Text>
                 </View>
+            )}
+            <View>
+                <Text style={styles.bold}>Members</Text>
+            </View>
+            {members.length === 0 ? (
+                <View>
+                    <Text>No members registered</Text>
+                </View>
+            ) : (
+                members.map((member) => (
+                    <Pressable
+                        key={member.users?.id}
+                    >
+                        <Text>{member.users?.name}</Text>
+                    </Pressable>
+                ))
             )}
         </ScrollView>
     );
